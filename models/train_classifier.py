@@ -2,6 +2,8 @@ import sys
 import pandas as pd
 from sqlalchemy import create_engine
 import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -45,8 +47,15 @@ def tokenize(text):
     # Tokenize the text into individual words
     tokens = word_tokenize(text)
 
+    # Define stop words
+    stop_words = set(stopwords.words('english'))
+
     # Convert the tokens to lowercase
-    tokens = [token.lower() for token in tokens]
+    tokens = [token.lower() for token in tokens if token not in stop_words]
+
+    # Lemmatize the tokens
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(token) for token in tokens]
 
     return tokens
 
@@ -63,7 +72,18 @@ def build_model():
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    return pipeline
+    
+    # Define the parameters for grid search
+    parameters = {
+        'vect__max_df': (0.5, 0.75, 1.0),
+        'clf__estimator__n_estimators': [50, 100, 200],
+        'clf__estimator__min_samples_split': [2, 3, 4]
+    }
+
+    # Perform grid search
+    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2)
+
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
