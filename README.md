@@ -46,5 +46,5 @@ For more details on the project, please refer to the project's instructions and 
 
 ## Contact Information
 
-Afif Akbar Iskandar
-Email: afif_a_iskandar@telkomsel.co.id
+- Afif Akbar Iskandar
+- Email: afif_a_iskandar@telkomsel.co.id
