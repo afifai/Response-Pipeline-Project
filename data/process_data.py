@@ -36,8 +36,8 @@ def load_data(messages_filepath, categories_filepath):
     # Convert category values to numeric
     for column in categories:
         categories[column] = categories[column].str[-1].astype(int).replace(2, 0)
-        categories[column] = categories[column].apply(lambda x: 1 if int(x.split('-')[1]) > 0 else 0)
-        
+        categories[column] = categories[column].apply(lambda x: 1 if x > 0 else 0)
+
     # Drop the original categories column and concatenate the modified one
     df = df.drop('categories', axis=1)
     df = pd.concat([df, categories], axis=1)
